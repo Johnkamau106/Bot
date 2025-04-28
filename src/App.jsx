@@ -38,12 +38,22 @@ useEffect(() => {
 
   const dischargeBot = (botId) => {
     if (window.confirm("Are you sure you want to discharge this bot?")) {
+      // First, create updated versions of the arrays
+      const updatedArmy = yourArmy.filter((bot) => bot.id !== botId);
+      const updatedBots = bots.filter((bot) => bot.id !== botId);
+
+      // Send DELETE request to backend
       fetch(`http://localhost:8001/bots/${botId}`, {
         method: 'DELETE',
-      }).then(() => {
-        setYourArmy(yourArmy.filter((bot) => bot.id !== botId));
-        setBots(bots.filter((bot) => bot.id !== botId));
-      });
+      })
+        .then(() => {
+          // Once the bot is deleted, update the state
+          setYourArmy(updatedArmy);
+          setBots(updatedBots);
+        })
+        .catch((error) => {
+          console.error('Error deleting bot:', error);
+        });
     }
   };
 

@@ -29,16 +29,6 @@
       "bot_class": "Tank",
       "catchphrase": "0110011100000100011110100110011000011001",
       "avatar_url": "https://robohash.org/voluptatemquasautem.png?size=300x300&set=set1"
-    },
-    {
-      "id": "104",
-      "name": "kJq-45",
-      "health": 90,
-      "damage": 30,
-      "armor": 60,
-      "bot_class": "Support",
-      "catchphrase": "1010010101001101100011000111101",
-      "avatar_url": "https://robohash.org/voluptatemquasautem.png?size=300x300&set=set1"
     }
   ]
 }
