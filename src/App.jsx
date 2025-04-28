@@ -9,15 +9,22 @@ function App() {
   const [yourArmy, setYourArmy] = useState([]);
   const [filter, setFilter] = useState('All');
 
-  useEffect(() => {
-    fetch('http://localhost:8001/bots')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Fetched bots:", data); // Log data to ensure it’s coming through
-        setBots(data);
-      })
-      .catch(error => console.error('Error fetching bots:', error));
-  }, []);
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  fetch('http://localhost:8001/bots')
+    .then(response => response.json())
+    .then(data => {
+      setBots(data);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error('Error fetching bots:', error);
+      setLoading(false);
+    });
+}, []);
+
+
 
   const addBotToArmy = (bot) => {
     if (!yourArmy.some((armyBot) => armyBot.id === bot.id)) {
@@ -30,12 +37,14 @@ function App() {
   };
 
   const dischargeBot = (botId) => {
-    fetch(`http://localhost:8001/bots/${botId}`, {
-      method: 'DELETE',
-    }).then(() => {
-      setYourArmy(yourArmy.filter((bot) => bot.id !== botId));
-      setBots(bots.filter((bot) => bot.id !== botId));
-    });
+    if (window.confirm("Are you sure you want to discharge this bot?")) {
+      fetch(`http://localhost:8001/bots/${botId}`, {
+        method: 'DELETE',
+      }).then(() => {
+        setYourArmy(yourArmy.filter((bot) => bot.id !== botId));
+        setBots(bots.filter((bot) => bot.id !== botId));
+      });
+    }
   };
 
   const filteredBots = filter === 'All'
@@ -64,8 +73,9 @@ function App() {
       </div>
 
       <div className="bot-collection">
-        {filteredBots.length === 0 && <p>No bots available.</p>}
-        <BotCollection bots={filteredBots} addBotToArmy={addBotToArmy} />
+        {loading ? <p>Loading bots...</p> : 
+          (filteredBots.length === 0 ? <p>No bots available.</p> : <BotCollection bots={filteredBots} addBotToArmy={addBotToArmy} />)
+        }
       </div>
 
       <div className="your-bot-army">
