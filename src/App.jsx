@@ -4,6 +4,43 @@ import BotCollection from './Components/BotCollection';
 import YourBotArmy from './Components/YourBotArmy';
 import './App.css';
 
+function App() {
+  const [bots, setBots] = useState([]);
+  const [yourArmy, setYourArmy] = useState([]);
+  const [filter, setFilter] = useState('All');
+
+  useEffect(() => {
+    fetch('http://localhost:8001/bots')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Fetched bots:", data); // Log data to ensure it’s coming through
+        setBots(data);
+      })
+      .catch(error => console.error('Error fetching bots:', error));
+  }, []);
+
+  const addBotToArmy = (bot) => {
+    if (!yourArmy.some((armyBot) => armyBot.id === bot.id)) {
+      setYourArmy([...yourArmy, bot]);
+    }
+  };
+
+  const removeBotFromArmy = (bot) => {
+    setYourArmy(yourArmy.filter((armyBot) => armyBot.id !== bot.id));
+  };
+
+  const dischargeBot = (botId) => {
+    fetch(`http://localhost:8001/bots/${botId}`, {
+      method: 'DELETE',
+    }).then(() => {
+      setYourArmy(yourArmy.filter((bot) => bot.id !== botId));
+      setBots(bots.filter((bot) => bot.id !== botId));
+    });
+  };
+
+  const filteredBots = filter === 'All'
+    ? bots
+    : bots.filter((bot) => bot.bot_class === filter);
 
   return (
     <div>
